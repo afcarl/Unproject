@@ -1,0 +1,65 @@
+Unproject
+=========
+
+Reprojects footage from a camera fixed into a car to make it appear as if the
+image is being shot from overhead.
+
+Prerequisites
+=============
+
+numpy
+OpenCV (with Python bindings)
+
+Usage
+=====
+
+See `./unproject -h`.
+
+Gravity Vec
+-----------
+
+The gravity vec field is the sensor data reported by the accelerometer. Y
+should correspond with out the top of the phone, X should be out the right
+hand size, Z should be out of the screen.
+
+The "Sensor Debug" app can be used to obtain these fields.
+
+https://play.google.com/store/apps/details?id=com.onionparadigm.test&hl=en_GB
+
+Camera height
+-------------
+
+Camera height from the ground plane. This in combination with pixel scale
+determines with scale of the output.
+
+Rotate
+------
+
+If the video is not orientated such that the top of the image corresponds
+with the top of the phone, then this option must be used to correct for
+the rotation. If for example, the video was show by turning the phone 90
+degrees clockwise the top of the video will correspond with the left edge
+of the phone. To correct for this "--rotate=1" should be passed so the input
+video is rotated 90 degrees CCW and the top of the video corresponds with
+the top of the phone.
+
+Cameras
+-------
+
+See cameras.py to find valid camera names. If your camera is not present you
+can add it by obtaining the relevant calibration parameters for your camera.
+
+Calibration parameters are described here:
+
+http://www.vision.caltech.edu/bouguetj/calib_doc/htmls/parameters.html
+
+Examples
+========
+
+./unproject.py -g '\'-8.76,-5.24,-0.75 -i vid.mp4 -c nexus_4_video
+
+Video
+=====
+
+See http://www.youtube.com/watch?v=ZERJQolFk_U for example output.
+
