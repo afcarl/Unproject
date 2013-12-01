@@ -29,6 +29,8 @@ parser.add_argument('-s', '--output-size', help="Size in pixels of output", type
 parser.add_argument('-p', '--pixel-size', help="Metres per output pixel", type=float, default=0.02)
 parser.add_argument('-H', '--camera-height', help="Camera height in metres", type=float, default=1.0)
 parser.add_argument('-g', '--gravity-vector', help="Gravity vector", type=make_tuple_parser(float_parser), required=True)
+parser.add_argument('--start-frame', help="Start frame", type=int, default=0)
+parser.add_argument('--end-frame', help="End frame", type=int, default=-1)
 args = parser.parse_args()
 
 cam = camera.get_camera(args.camera_name)
@@ -60,16 +62,24 @@ for y in range(args.output_size[1]):
 
         map_y[args.output_size[1] - y - 1, x] = cam.size[1] - road_pixel[1, 0]
         map_x[args.output_size[1] - y - 1, x] = road_pixel[0, 0]
-print map_x
-print map_y
 print "Done"
 
 # Convert the input images.
 vc = cv2.VideoCapture()
 vc.open(args.input_video)
 
-for i in xrange(530 * 25):
-    for j in xrange(1): vc.grab()
+def frame_num_gen():
+    i = args.start_frame
+    while True:
+        if args.end_frame >= 0 and i >= args.end_frame:
+            break
+        yield i
+
+        i += 1
+
+for i in frame_num_gen():
+    if not vc.grab():
+        break
        
     print "Processing {}".format(i)
     im_in = vc.retrieve()[1]
@@ -78,4 +88,3 @@ for i in xrange(530 * 25):
     im_out = cv2.remap(im_in, map_x.astype('float32'), map_y.astype('float32'), cv2.INTER_CUBIC)
     cv2.imwrite(args.output_format % i, im_out)
 
-    break
